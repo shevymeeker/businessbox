@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BusinessBox Toolkit</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      max-width: 720px;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.55);
+    }
+    h1 {
+      margin-top: 0;
+      color: #38bdf8;
+      letter-spacing: 0.05em;
+    }
+    p {
+      line-height: 1.6;
+    }
+    ul {
+      line-height: 1.8;
+    }
+    strong {
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Offline Toolkit Index</h1>
+    <p>This lightweight index is cached by the service worker so your formation tools open instantly, even without a network connection.</p>
+    <ul>
+      <li><strong>Shell assets</strong> (landing UI, manifest, icons) load Cache-First from the local cache.</li>
+      <li><strong>Toolkit content</strong> is refreshed with a Stale-While-Revalidate strategy so updates download quietly in the background.</li>
+      <li><strong>First visit priming</strong> ensures subsequent sessions stay fully functional without signing in or reloading remote assets.</li>
+    </ul>
+  </main>
+</body>
+</html>
