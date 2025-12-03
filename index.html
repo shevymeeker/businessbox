@@ -3,486 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entity Formation Engine | v1.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>The Business Box | Kentucky Formation & Offline Toolkit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap');
-        
-        body { font-family: 'Inter', sans-serif; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        
-        /* Custom scrollbar for the preview pane */
-        .preview-pane::-webkit-scrollbar { width: 8px; }
-        .preview-pane::-webkit-scrollbar-track { background: #1e293b; }
-        .preview-pane::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        .preview-pane::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-        .input-group { margin-bottom: 1.5rem; }
-        .input-label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
-        .input-field { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.375rem; padding: 0.75rem; font-size: 0.875rem; color: #1e293b; transition: all 0.2s; }
-        .input-field:focus { outline: none; border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        
-        .doc-preview { font-family: 'Times New Roman', serif; line-height: 1.6; color: #000; padding: 2rem; background: white; min-height: 100%; }
-        .doc-title { text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 2rem; text-decoration: underline; }
-        .doc-section { margin-bottom: 1.5rem; }
-        .doc-header { font-weight: bold; margin-bottom: 0.5rem; }
-        
-        /* Toggle Switch */
-        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
+        :root {
+            --bg: #0a0f1a;
+            --card: #0f172a;
+            --accent: #22d3ee;
+            --muted: #94a3b8;
+            --text: #e2e8f0;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.05), transparent 25%),
+                        radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.08), transparent 35%),
+                        var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        a { color: inherit; text-decoration: none; }
+        header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: 0.02em; }
+        .brand .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #22d3ee, #3b82f6);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: #0b1224;
+            box-shadow: var(--shadow);
+        }
+        nav { display: flex; gap: 18px; font-size: 0.95rem; color: var(--muted); }
+        nav a:hover { color: #fff; }
+        .hero {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 36px 20px 48px;
+            display: grid;
+            gap: 28px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            align-items: center;
+        }
+        .hero-content h1 { font-size: clamp(2.2rem, 4vw, 3.1rem); margin: 0 0 12px; }
+        .hero-content p { margin: 0 0 18px; color: var(--muted); font-size: 1.05rem; }
+        .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(34, 211, 238, 0.1); color: #67e8f9; font-weight: 600; font-size: 0.9rem; }
+        .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+        .btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+        .btn-primary { background: linear-gradient(135deg, #22d3ee, #3b82f6); color: #0b1224; box-shadow: var(--shadow); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.04); color: var(--text); border-color: rgba(255, 255, 255, 0.08); }
+        .btn:hover { transform: translateY(-1px); }
+        .card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .pill { display: inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+        }
+        .comparison { margin-top: 12px; display: grid; gap: 10px; }
+        .comparison-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: center; }
+        .comparison-row div { padding: 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); font-weight: 600; }
+        .comparison-row .label { color: var(--muted); font-weight: 500; }
+        footer { max-width: 1100px; margin: 0 auto; padding: 32px 20px 48px; color: var(--muted); font-size: 0.95rem; }
+        .section-title { display: flex; align-items: baseline; gap: 10px; margin: 12px 0 8px; }
+        .section-title span { color: var(--muted); font-size: 0.95rem; }
+        @media (max-width: 720px) {
+            header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            nav { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+            .comparison-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
-<body class="bg-slate-100 h-screen flex flex-col overflow-hidden">
-
-    <!-- Top Bar -->
-    <header class="bg-slate-900 text-white h-14 flex items-center justify-between px-6 flex-shrink-0 z-10 shadow-md">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-cube text-blue-500"></i>
-            <span class="font-bold tracking-wide text-sm">ENTITY FORMATION ENGINE</span>
-            <span class="bg-slate-800 text-xs px-2 py-0.5 rounded text-slate-400 mono">v1.0.4</span>
+<body>
+    <header>
+        <div class="brand">
+            <div class="logo">BB</div>
+            <div>
+                <div>The Business Box</div>
+                <small style="color: var(--muted); font-weight: 600;">Offline-first formation toolkit</small>
+            </div>
         </div>
-        <div class="flex items-center gap-4">
-            <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-white transition">Reset</button>
-            <button onclick="downloadAll()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-medium transition flex items-center gap-2">
-                <i class="fa-solid fa-download"></i> Download Package (.zip)
-            </button>
-        </div>
+        <nav>
+            <a href="#offer">What you get</a>
+            <a href="#web">Web packages</a>
+            <a href="#compare">Compare</a>
+            <a href="#cta">Get started</a>
+        </nav>
     </header>
 
-    <!-- Main Workspace -->
-    <div class="flex flex-1 overflow-hidden">
-        
-        <!-- Left Panel: Input -->
-        <div class="w-1/2 flex flex-col border-r border-slate-200 bg-white">
-            <!-- Tabs -->
-            <div class="flex border-b border-slate-200 bg-slate-50">
-                <button class="px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 bg-white" onclick="switchTab('input', this)">Input Data</button>
-                <button class="px-6 py-3 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="switchTab('config', this)">Configuration</button>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge">Now serving Kentucky only — not legal advice</div>
+            <h1>Flat-price filings with an offline-ready toolkit for your whole business box.</h1>
+            <p>Single-purpose, production-ready deliverables: formation paperwork, EIN and tax docs, banking resolution, business plan, operating agreement, Netlify-delivered web template, offline PWA toolkit, and branded stationery/uniform starters.</p>
+            <div class="cta-row">
+                <a class="btn btn-primary" href="./tools/formation/" id="cta-get-started">Get started with formation</a>
+                <a class="btn btn-secondary" href="#web" aria-label="One-time web packages">Buy one-time web package</a>
             </div>
-
-            <!-- Scrollable Form Area -->
-            <div class="flex-1 overflow-y-auto p-8">
-                <form id="entityForm" oninput="updatePreview()">
-                    
-                    <!-- Section 1: Entity Structure -->
-                    <div class="mb-8">
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-building text-slate-400"></i> Structure
-                        </h2>
-                        
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="input-group">
-                                <label class="input-label">Entity Type</label>
-                                <select id="entityType" class="input-field" onchange="toggleEntityFields()">
-                                    <option value="LLC">Limited Liability Company (LLC)</option>
-                                    <option value="CORP">Corporation (Inc.)</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">State of Formation</label>
-                                <input type="text" id="state" class="input-field" placeholder="e.g. Delaware">
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label class="input-label">Entity Name</label>
-                            <input type="text" id="entityName" class="input-field" placeholder="e.g. Ironclad Holdings">
-                        </div>
-                    </div>
-
-                    <!-- Section 2: Management & Ownership -->
-                    <div class="mb-8">
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-users text-slate-400"></i> Ownership
-                        </h2>
-
-                        <!-- Dynamic List Container -->
-                        <div id="membersContainer" class="space-y-3 mb-4">
-                            <!-- JS will populate rows here -->
-                        </div>
-                        
-                        <button type="button" onclick="addMemberRow()" class="text-xs text-blue-600 hover:text-blue-800 font-bold uppercase tracking-wide flex items-center gap-1">
-                            <i class="fa-solid fa-plus"></i> Add <span id="addLabel">Member</span>
-                        </button>
-
-                        <div class="mt-6 grid grid-cols-2 gap-4">
-                             <div class="input-group">
-                                <label class="input-label" id="mgmtLabel">Management</label>
-                                <select id="managementType" class="input-field">
-                                    <option value="Member-Managed">Member-Managed</option>
-                                    <option value="Manager-Managed">Manager-Managed</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 3: Registered Agent -->
-                    <div class="mb-8">
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-shield-halved text-slate-400"></i> Registered Agent
-                        </h2>
-                        <div class="input-group">
-                            <label class="input-label">Agent Name</label>
-                            <input type="text" id="agentName" class="input-field" placeholder="Full Legal Name or Commercial Agent">
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label">Physical Address (No PO Boxes)</label>
-                            <input type="text" id="agentAddress" class="input-field" placeholder="Street, City, Zip">
-                        </div>
-                    </div>
-
-                    <!-- Section 4: Banking & Tax -->
-                    <div class="mb-8">
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-money-check-dollar text-slate-400"></i> Banking & Tax
-                        </h2>
-                        <div class="input-group">
-                            <label class="input-label">Fiscal Year End</label>
-                            <select id="fiscalYear" class="input-field">
-                                <option value="December 31">Calendar Year (Dec 31)</option>
-                                <option value="June 30">Fiscal Year (Jun 30)</option>
-                                <option value="September 30">Fiscal Year (Sep 30)</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label">Bank Name (For Resolution)</label>
-                            <input type="text" id="bankName" class="input-field" placeholder="e.g. Chase, Wells Fargo, Mercury">
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label">Initial Capital Contribution ($)</label>
-                            <input type="number" id="capital" class="input-field" value="1000">
-                        </div>
-                    </div>
-
-                </form>
-            </div>
+            <p style="color: var(--muted); margin-top: 12px; font-size: 0.9rem;">Everything is built to work offline after first load. No subscriptions. Clear scope, clear price.</p>
         </div>
-
-        <!-- Right Panel: Live Preview -->
-        <div class="w-1/2 flex flex-col bg-slate-800 border-l border-slate-700">
-            <!-- Preview Controls -->
-            <div class="bg-slate-900 p-2 flex gap-2 overflow-x-auto no-scrollbar border-b border-slate-700">
-                <button onclick="setPreview('articles')" id="btn-articles" class="preview-tab px-3 py-2 text-xs font-mono text-white bg-slate-700 rounded transition">ARTICLES</button>
-                <button onclick="setPreview('bylaws')" id="btn-bylaws" class="preview-tab px-3 py-2 text-xs font-mono text-slate-400 hover:text-white transition">GOVERNANCE</button>
-                <button onclick="setPreview('ein')" id="btn-ein" class="preview-tab px-3 py-2 text-xs font-mono text-slate-400 hover:text-white transition">SS-4 INFO</button>
-                <button onclick="setPreview('banking')" id="btn-banking" class="preview-tab px-3 py-2 text-xs font-mono text-slate-400 hover:text-white transition">BANKING RES</button>
+        <div class="card" id="offer">
+            <div class="section-title">
+                <h3 style="margin:0;">What’s inside the box</h3>
+                <span>One flat delivery</span>
             </div>
-
-            <!-- Preview Pane -->
-            <div class="preview-pane flex-1 overflow-y-auto p-8 bg-slate-300">
-                <div id="docPreviewCanvas" class="doc-preview shadow-2xl mx-auto max-w-2xl text-sm">
-                    <!-- Content injected via JS -->
+            <div class="grid">
+                <div>
+                    <div class="pill">Formation</div>
+                    <strong>Kentucky filings</strong><br>
+                    Registered agent details captured for filings. Not legal advice.
+                </div>
+                <div>
+                    <div class="pill">Compliance</div>
+                    EIN & tax docs prepared alongside banking resolution for launch-ready accounts.
+                </div>
+                <div>
+                    <div class="pill">Operations</div>
+                    Operating agreement + business plan templates tuned for small teams.
+                </div>
+                <div>
+                    <div class="pill">Web</div>
+                    Static site delivered via Netlify deploy link plus offline PWA toolkit starter.
+                </div>
+                <div>
+                    <div class="pill">Brand</div>
+                    Branded stationery & uniform starter pack for consistent first impressions.
+                </div>
+                <div>
+                    <div class="pill">Control</div>
+                    Client-side zip export keeps data local; works fully offline after first load.
                 </div>
             </div>
-            
-            <!-- Footer Status -->
-            <div class="bg-slate-900 text-slate-500 text-xs px-4 py-2 flex justify-between font-mono">
-                <span id="statusIndicator">SYSTEM READY</span>
-                <span>AUTO-SAVE: ENABLED</span>
+        </div>
+    </section>
+
+    <section class="hero" id="web" style="padding-top: 0;">
+        <div class="card">
+            <div class="section-title">
+                <h3 style="margin:0;">One-time web packages</h3>
+                <span>Own your stack</span>
+            </div>
+            <p style="color: var(--muted); margin: 6px 0 14px;">We ship exportable HTML/JS with a Netlify deploy hook, offline PWA scaffold, and Dexie-powered local storage so your clients can keep working without a connection.</p>
+            <div class="grid">
+                <div>
+                    <div class="pill">Launch</div>
+                    Landing page + contact form, Netlify-ready, cache-first shell, app manifest.
+                </div>
+                <div>
+                    <div class="pill">Transact</div>
+                    Product/services page with one-time checkout CTA you control—no recurring platform fees.
+                </div>
+                <div>
+                    <div class="pill">Toolkit</div>
+                    Offline PWA toolkit with Dexie.js scaffolding for inventory, bookings, or logs.
+                </div>
+            </div>
+            <div class="cta-row" style="margin-top: 18px;">
+                <a class="btn btn-primary" href="#cta">Purchase package</a>
+                <a class="btn btn-secondary" href="./tools/formation/">See formation tool</a>
             </div>
         </div>
+        <div class="card" id="compare">
+            <div class="section-title">
+                <h3 style="margin:0;">Why not a subscription builder?</h3>
+                <span>Keep it offline-first</span>
+            </div>
+            <div class="comparison">
+                <div class="comparison-row">
+                    <div class="label">Ownership</div>
+                    <div>One-time files + Netlify deploys you control</div>
+                    <div>Locked into monthly platform fees</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="label">Offline access</div>
+                    <div>App shell cached; Dexie.js for data when offline</div>
+                    <div>Depends on vendor connection to load UI</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="label">Branding</div>
+                    <div>Custom palette distinct from internal tooling</div>
+                    <div>Shared templates and watermarks</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="label">Cost</div>
+                    <div>Flat-price filings and one-time web packages</div>
+                    <div>Recurring charges even when idle</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    </div>
+    <section id="cta" class="hero" style="padding-top: 0;">
+        <div class="card">
+            <div class="section-title">
+                <h3 style="margin:0;">Ready to begin?</h3>
+                <span>Kentucky only</span>
+            </div>
+            <p style="color: var(--muted);">Start the formation workflow or lock in a one-time web package. We don’t provide legal advice; we ship clear deliverables you control.</p>
+            <div class="cta-row">
+                <a class="btn btn-primary" href="./tools/formation/">Start filings</a>
+                <a class="btn btn-secondary" href="#web">Reserve web package</a>
+            </div>
+        </div>
+        <div>
+            <div class="pill">Transparency</div>
+            <p style="margin: 6px 0 6px; color: var(--muted);">Flat-price filings, EIN/tax docs, banking resolution, operating agreement, business plan templates, Netlify web delivery, offline PWA toolkit, branded stationery/uniform starters. No subscriptions.</p>
+            <div class="pill">Support</div>
+            <p style="margin: 6px 0 0; color: var(--muted);">For service updates or scope questions, use the formation tool’s export to keep your data local.</p>
+        </div>
+    </section>
 
-    <!-- Logic Engine -->
-    <script>
-        // --- State Management ---
-        const state = {
-            currentDoc: 'articles',
-            data: {
-                members: [{ name: '', percent: '' }]
-            }
-        };
-
-        // --- Init ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadLocal();
-            addMemberRow(); // Add initial row if empty
-            toggleEntityFields(); // Set initial labels
-            updatePreview();
-        });
-
-        // --- Input Handling ---
-        function addMemberRow() {
-            const container = document.getElementById('membersContainer');
-            const index = container.children.length;
-            
-            const div = document.createElement('div');
-            div.className = "flex gap-2 items-center";
-            div.innerHTML = `
-                <input type="text" class="input-field member-name" placeholder="Name" oninput="updatePreview()">
-                <input type="text" class="input-field w-24 member-percent" placeholder="%" oninput="updatePreview()">
-                <button type="button" onclick="this.parentElement.remove(); updatePreview()" class="text-slate-400 hover:text-red-500 px-2">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            `;
-            container.appendChild(div);
-        }
-
-        function toggleEntityFields() {
-            const type = document.getElementById('entityType').value;
-            const isLLC = type === 'LLC';
-
-            // Update Labels
-            document.getElementById('addLabel').innerText = isLLC ? 'Member' : 'Shareholder';
-            document.getElementById('mgmtLabel').innerText = isLLC ? 'Management Structure' : 'Directors Structure';
-            
-            // Update Select Options for Corp
-            const mgmtSelect = document.getElementById('managementType');
-            mgmtSelect.innerHTML = '';
-            if (isLLC) {
-                mgmtSelect.add(new Option('Member-Managed', 'Member-Managed'));
-                mgmtSelect.add(new Option('Manager-Managed', 'Manager-Managed'));
-            } else {
-                mgmtSelect.add(new Option('Board of Directors', 'Board of Directors'));
-                mgmtSelect.add(new Option('Shareholder-Managed', 'Shareholder-Managed'));
-            }
-
-            updatePreview();
-        }
-
-        function getFormData() {
-            const members = Array.from(document.querySelectorAll('#membersContainer > div')).map(row => ({
-                name: row.querySelector('.member-name').value,
-                percent: row.querySelector('.member-percent').value
-            })).filter(m => m.name); // Filter empty
-
-            return {
-                type: document.getElementById('entityType').value,
-                state: document.getElementById('state').value || '[STATE]',
-                name: document.getElementById('entityName').value || '[ENTITY NAME]',
-                agentName: document.getElementById('agentName').value || '[AGENT NAME]',
-                agentAddress: document.getElementById('agentAddress').value || '[AGENT ADDRESS]',
-                management: document.getElementById('managementType').value,
-                fiscalYear: document.getElementById('fiscalYear').value,
-                bank: document.getElementById('bankName').value || '[BANK NAME]',
-                capital: document.getElementById('capital').value || '0',
-                members: members.length ? members : [{name: '[NAME]', percent: '100'}]
-            };
-        }
-
-        // --- Document Factory ---
-        function generateDoc(type, data) {
-            const isLLC = data.type === 'LLC';
-            const suffix = isLLC ? 'LLC' : 'Inc.';
-            const entityFullName = `${data.name}, ${data.type === 'LLC' ? 'LLC' : 'Inc.'}`;
-            const govDocName = isLLC ? 'OPERATING AGREEMENT' : 'BYLAWS';
-            const ownerTitle = isLLC ? 'Member' : 'Shareholder';
-            const govBody = isLLC ? 'Members' : 'Board of Directors';
-
-            switch(type) {
-                case 'articles':
-                    return `
-                        <div class="doc-title">${isLLC ? 'ARTICLES OF ORGANIZATION' : 'ARTICLES OF INCORPORATION'}<br>OF<br>${entityFullName}</div>
-                        <div class="doc-section">
-                            <div class="doc-header">ARTICLE I: NAME</div>
-                            The name of the ${isLLC ? 'limited liability company' : 'corporation'} is ${entityFullName}.
-                        </div>
-                        <div class="doc-section">
-                            <div class="doc-header">ARTICLE II: REGISTERED AGENT</div>
-                            The name and street address of the registered agent for service of process is:<br>
-                            ${data.agentName}<br>
-                            ${data.agentAddress}
-                        </div>
-                        <div class="doc-section">
-                            <div class="doc-header">ARTICLE III: MANAGEMENT</div>
-                            The ${isLLC ? 'Company' : 'Corporation'} shall be managed by: ${data.management}.
-                        </div>
-                        <div class="doc-section">
-                            <div class="doc-header">ARTICLE IV: DURATION</div>
-                            The duration of the entity shall be perpetual unless dissolved in accordance with the law.
-                        </div>
-                        <br><br>
-                        ___________________________<br>
-                        Organizer Signature<br>
-                        Date: ${new Date().toLocaleDateString()}
-                    `;
-
-                case 'bylaws':
-                    let memberListHtml = data.members.map(m => `<li>${m.name} - ${m.percent}% Ownership Interest</li>`).join('');
-                    
-                    return `
-                        <div class="doc-title">${govDocName}<br>OF<br>${entityFullName}</div>
-                        <div class="doc-section">
-                            <div class="doc-header">I. FORMATION</div>
-                            Adopted by the ${ownerTitle}s as the governing document for ${entityFullName}, formed under the laws of ${data.state}.
-                        </div>
-                        <div class="doc-section">
-                            <div class="doc-header">II. OWNERSHIP STRUCTURE</div>
-                            The initial ${ownerTitle}s and their respective interests are:<br>
-                            <ul>${memberListHtml}</ul>
-                        </div>
-                        <div class="doc-section">
-                            <div class="doc-header">III. CAPITAL CONTRIBUTIONS</div>
-                            Total initial capital contribution: $${data.capital}.
-                        </div>
-                        <div class="doc-section">
-                            <div class="doc-header">IV. BANKING</div>
-                            All funds shall be deposited in the name of the entity. All withdrawals require authorization from the ${data.management}.
-                        </div>
-                         <div class="doc-section">
-                            <div class="doc-header">V. FISCAL YEAR</div>
-                            The fiscal year shall end on ${data.fiscalYear}.
-                        </div>
-                    `;
-
-                case 'ein':
-                    return `
-                        <div class="doc-title">SS-4 DATA SUMMARY SHEET</div>
-                        <p><strong>NOTE:</strong> Use this data to complete the online IRS EIN Assistant application.</p>
-                        <hr style="margin: 1rem 0;">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <strong>Legal Name:</strong> ${entityFullName}<br>
-                                <strong>Entity Type:</strong> ${isLLC ? 'Limited Liability Company' : 'Corporation'}<br>
-                                <strong>State:</strong> ${data.state}<br>
-                                <strong>Start Date:</strong> ${new Date().toLocaleDateString()}
-                            </div>
-                            <div>
-                                <strong>Responsible Party:</strong> ${data.members[0].name}<br>
-                                <strong>SSN/ITIN:</strong> [COLLECT SECURELY OFFLINE]<br>
-                                <strong>Physical Address:</strong> ${data.agentAddress}<br>
-                                <strong>Closing Month:</strong> ${data.fiscalYear}
-                            </div>
-                        </div>
-                        <div class="doc-section" style="margin-top: 2rem;">
-                            <div class="doc-header">Reason for Applying</div>
-                            Started a new business.
-                        </div>
-                    `;
-
-                case 'banking':
-                    return `
-                        <div class="doc-title">BANKING RESOLUTION<br>AUTHORITY TO OPEN ACCOUNT</div>
-                        <div class="doc-section">
-                            <strong>RESOLVED</strong>, that ${data.bank} is designated as a depository for the funds of ${entityFullName}.
-                        </div>
-                        <div class="doc-section">
-                            <strong>RESOLVED</strong>, that the following individuals are authorized to sign checks, drafts, or other orders for the payment of money:
-                        </div>
-                        <ul>
-                            ${data.members.map(m => `<li>${m.name}</li>`).join('')}
-                        </ul>
-                        <div class="doc-section">
-                            <strong>CERTIFICATION</strong><br>
-                            I hereby certify that I am the authorized Organizer/Secretary of ${entityFullName}, and the above resolutions were duly adopted.
-                        </div>
-                        <br><br>
-                        ___________________________<br>
-                        Signature<br>
-                        Date: ${new Date().toLocaleDateString()}
-                    `;
-            }
-        }
-
-        // --- UI Logic ---
-        function setPreview(type) {
-            state.currentDoc = type;
-            
-            // Update active button state
-            document.querySelectorAll('.preview-tab').forEach(b => {
-                b.classList.remove('bg-slate-700', 'text-white');
-                b.classList.add('text-slate-400');
-            });
-            const activeBtn = document.getElementById(`btn-${type}`);
-            activeBtn.classList.add('bg-slate-700', 'text-white');
-            activeBtn.classList.remove('text-slate-400');
-
-            updatePreview();
-        }
-
-        function updatePreview() {
-            const data = getFormData();
-            const html = generateDoc(state.currentDoc, data);
-            document.getElementById('docPreviewCanvas').innerHTML = html;
-            
-            // Auto-save logic
-            localStorage.setItem('entity_engine_data', JSON.stringify(data));
-            document.getElementById('statusIndicator').innerText = "SAVED: " + new Date().toLocaleTimeString();
-            document.getElementById('statusIndicator').classList.add('text-green-500');
-            setTimeout(() => document.getElementById('statusIndicator').classList.remove('text-green-500'), 1000);
-        }
-
-        function switchTab(tab, btn) {
-            // Simple tab logic if we add config later
-            if (tab === 'input') {
-                document.getElementById('entityForm').style.display = 'block';
-            } else {
-                alert("Configuration module not loaded in v1.0");
-            }
-        }
-
-        function resetForm() {
-            if(confirm("Clear all data?")) {
-                localStorage.removeItem('entity_engine_data');
-                location.reload();
-            }
-        }
-
-        function loadLocal() {
-            const saved = localStorage.getItem('entity_engine_data');
-            if (saved) {
-                const data = JSON.parse(saved);
-                document.getElementById('entityType').value = data.type;
-                document.getElementById('state').value = data.state;
-                document.getElementById('entityName').value = data.name;
-                document.getElementById('agentName').value = data.agentName;
-                document.getElementById('agentAddress').value = data.agentAddress;
-                document.getElementById('bankName').value = data.bank;
-                document.getElementById('capital').value = data.capital;
-                
-                // Rebuild members
-                const container = document.getElementById('membersContainer');
-                container.innerHTML = '';
-                data.members.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = "flex gap-2 items-center";
-                    div.innerHTML = `
-                        <input type="text" class="input-field member-name" value="${m.name}" placeholder="Name" oninput="updatePreview()">
-                        <input type="text" class="input-field w-24 member-percent" value="${m.percent}" placeholder="%" oninput="updatePreview()">
-                        <button type="button" onclick="this.parentElement.remove(); updatePreview()" class="text-slate-400 hover:text-red-500 px-2">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    `;
-                    container.appendChild(div);
-                });
-            }
-        }
-
-        // --- Download Logic ---
-        function downloadAll() {
-            const data = getFormData();
-            const zip = new JSZip();
-            const folderName = data.name.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'entity_docs';
-            const folder = zip.folder(folderName);
-
-            // Generate contents
-            const docs = ['articles', 'bylaws', 'ein', 'banking'];
-            const names = {
-                'articles': `1_Articles_of_${data.type === 'LLC' ? 'Organization' : 'Incorporation'}.html`,
-                'bylaws': `2_${data.type === 'LLC' ? 'Operating_Agreement' : 'Bylaws'}.html`,
-                'ein': `3_SS4_Info_Sheet.html`,
-                'banking': `4_Banking_Resolution.html`
-            };
-
-            docs.forEach(docType => {
-                const content = `
-                    <html>
-                    <head><style>body { font-family: 'Times New Roman', serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6; } .doc-title { text-align: center; font-weight: bold; margin-bottom: 30px; } .doc-header { font-weight: bold; margin-top: 20px; }</style></head>
-                    <body>${generateDoc(docType, data)}</body>
-                    </html>
-                `;
-                folder.file(names[docType], content);
-            });
-
-            // Generate ZIP
-            zip.generateAsync({type:"blob"}).then(function(content) {
-                saveAs(content, `${folderName}_formation_kit.zip`);
-            });
-        }
-    </script>
+    <footer>
+        <strong>The Business Box</strong> — built for Kentucky founders who want a self-contained, offline-capable business stack. Not legal advice. All web deliverables are one-time packages deployed to Netlify with offline-first defaults.
+    </footer>
 </body>
 </html>
