@@ -189,6 +189,23 @@
 
     <!-- Logic Engine -->
     <script>
+        // --- ACCESS CONTROL ---
+        // Simple password protection - for admin/hired clients only
+        function checkAccess() {
+            const hasAccess = sessionStorage.getItem('formation_access');
+            if (!hasAccess) {
+                const password = prompt('This tool is for hired clients only. Please enter access code:');
+                // You can change this password to whatever you want
+                if (password !== 'businessbox2025') {
+                    alert('Access denied. Please contact The Business Box to hire our formation services.');
+                    window.location.href = '/';
+                    return false;
+                }
+                sessionStorage.setItem('formation_access', 'granted');
+            }
+            return true;
+        }
+
         // --- State Management ---
         const state = {
             currentDoc: 'articles',
@@ -199,6 +216,8 @@
 
         // --- Init ---
         document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAccess()) return;
+
             loadLocal();
             addMemberRow(); // Add initial row if empty
             toggleEntityFields(); // Set initial labels
